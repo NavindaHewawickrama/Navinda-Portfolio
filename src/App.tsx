@@ -1,6 +1,6 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect} from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, MeshDistortMaterial } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
 // ── Google Fonts injection ──────────────────────────────────────────────────
@@ -196,7 +196,7 @@ function ProjectCarousel({ theme }: { theme: string }) {
         gap: '32px',
         alignItems: 'stretch',
       }}>
-        {visibleProjects.map((project, idx) => (
+        {visibleProjects.map((project) => (
           <div
             key={`${project.id}-${currentIndex}`}
             style={{
@@ -329,7 +329,7 @@ function ProjectCarousel({ theme }: { theme: string }) {
                   e.currentTarget.style.opacity = '1';
                 }}
               >
-                View Project →
+                View Projects →
               </button>
             </div>
           </div>
