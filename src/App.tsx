@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect} from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -102,10 +102,12 @@ function ThreeScene({ theme }: { theme: string }) {
 const PROJECTS = [
   {
     id: 1,
-    title: '3D Portfolio',
-    tech: 'React · Three.js',
+    title: 'Jewelry Designer Portfolio',
+    tech: 'React',
     tag: 'Live',
-    desc: 'Immersive 3D personal portfolio with interactive WebGL scenes.',
+    desc: 'Elegant portfolio showcasing handcrafted jewelry with smooth animations and responsive design.',
+    github: 'https://github.com/NavindaHewawickrama/dasaratha-jewelry.git',
+    website: 'https://kandy-heritage-jewelry.web.app/',
   },
   {
     id: 2,
@@ -113,6 +115,8 @@ const PROJECTS = [
     tech: 'Python · FastAPI',
     tag: 'Live',
     desc: 'Text-to-image pipeline powered by diffusion models and REST API.',
+    github: 'https://github.com/NavindaHewawickrama/ai-image-gen',
+    website: 'https://ai-image-gen.web.app',
   },
   {
     id: 3,
@@ -120,6 +124,8 @@ const PROJECTS = [
     tech: 'Next.js · Stripe',
     tag: 'Live',
     desc: 'Full-stack store with real-time inventory and payments.',
+    github: 'https://github.com/NavindaHewawickrama/ecommerce-app',
+    website: 'https://ecommerce-app.web.app',
   },
   {
     id: 4,
@@ -127,6 +133,8 @@ const PROJECTS = [
     tech: 'Storybook · Figma',
     tag: 'WIP',
     desc: 'Component library with accessibility-first primitives.',
+    github: 'https://github.com/NavindaHewawickrama/design-system',
+    website: '#',
   },
   {
     id: 5,
@@ -134,6 +142,8 @@ const PROJECTS = [
     tech: 'Socket.io · Redis',
     tag: 'Live',
     desc: 'Scalable chat with presence indicators and message threading.',
+    github: 'https://github.com/NavindaHewawickrama/realtime-chat',
+    website: 'https://realtime-chat.web.app',
   },
   {
     id: 6,
@@ -141,6 +151,8 @@ const PROJECTS = [
     tech: 'D3 · Recharts',
     tag: 'Live',
     desc: 'Analytics dashboard with animated charts and CSV export.',
+    github: 'https://github.com/NavindaHewawickrama/data-dashboard',
+    website: 'https://data-dashboard.web.app',
   },
 ];
 
@@ -170,7 +182,7 @@ function ProjectCarousel({ theme }: { theme: string }) {
   };
 
   useEffect(() => {
-    const interval = setInterval(nextProject, 5000);
+    const interval = setInterval(nextProject, 20000);
     return () => clearInterval(interval);
   }, [projectsToShow]);
 
@@ -285,18 +297,25 @@ function ProjectCarousel({ theme }: { theme: string }) {
               justifyContent: 'center',
               marginTop: 'auto',
             }}>
-              <button style={{
-                padding: '8px 20px',
-                background: 'transparent',
-                color: vars['--text'],
-                border: `1px solid ${isColor ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)'}`,
-                borderRadius: '30px',
-                fontSize: '12px',
-                fontWeight: 500,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                fontFamily: 'DM Sans,sans-serif',
-              }}
+              {/* GitHub Button */}
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  padding: '8px 20px',
+                  background: 'transparent',
+                  color: vars['--text'],
+                  border: `1px solid ${isColor ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)'}`,
+                  borderRadius: '30px',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  fontFamily: 'DM Sans,sans-serif',
+                  textDecoration: 'none',
+                  display: 'inline-block',
+                }}
                 onMouseEnter={e => {
                   e.currentTarget.style.borderColor = isColor ? '#FF6B35' : '#111';
                   e.currentTarget.style.transform = 'translateY(-1px)';
@@ -306,31 +325,44 @@ function ProjectCarousel({ theme }: { theme: string }) {
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                GitHub
-              </button>
-              <button style={{
-                padding: '8px 20px',
-                background: isColor ? '#FF6B35' : '#111',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '30px',
-                fontSize: '12px',
-                fontWeight: 500,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                fontFamily: 'DM Sans,sans-serif',
-              }}
+                <span style={{ marginRight: '6px' }}>🐙</span> GitHub
+              </a>
+
+              {/* Website Button */}
+              <a
+                href={project.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  padding: '8px 20px',
+                  background: project.website !== '#' ? (isColor ? '#FF6B35' : '#111') : 'transparent',
+                  color: project.website !== '#' ? '#fff' : vars['--muted'],
+                  border: project.website !== '#' ? 'none' : `1px solid ${isColor ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)'}`,
+                  borderRadius: '30px',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  cursor: project.website !== '#' ? 'pointer' : 'not-allowed',
+                  transition: 'all 0.2s ease',
+                  fontFamily: 'DM Sans,sans-serif',
+                  textDecoration: 'none',
+                  display: 'inline-block',
+                  opacity: project.website !== '#' ? 1 : 0.5,
+                }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.opacity = '0.9';
+                  if (project.website !== '#') {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.opacity = '0.9';
+                  }
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.opacity = '1';
+                  if (project.website !== '#') {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.opacity = '1';
+                  }
                 }}
               >
-                View Projects →
-              </button>
+                <span style={{ marginRight: '6px' }}>🌐</span> Live Demo →
+              </a>
             </div>
           </div>
         ))}
@@ -345,7 +377,7 @@ function ProjectCarousel({ theme }: { theme: string }) {
           gap: '24px',
           marginTop: '40px',
           paddingTop: '44px',
-        //  borderTop: `1px solid ${isColor ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+          //  borderTop: `1px solid ${isColor ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
         }}>
           <button
             onClick={prevProject}
@@ -447,8 +479,8 @@ function ProjectCarousel({ theme }: { theme: string }) {
 
 // ── Contact ──────────────────────────────────────────────────────────────────
 const CONTACTS = [
-  { label: 'LinkedIn', icon: '💼', href: 'https://linkedin.com/in/navinda', value: 'linkedin.com/in/navinda' },
-  { label: 'GitHub', icon: '🐙', href: 'https://github.com/navinda', value: 'github.com/navinda' },
+  { label: 'LinkedIn', icon: '💼', href: 'https://linkedin.com/in/navinda-hewawickrama', value: 'linkedin.com/in/navinda' },
+  { label: 'GitHub', icon: '🐙', href: 'https://github.com/NavindaHewawickrama', value: 'github.com/navinda' },
   { label: 'Email', icon: '✉️', href: 'mailto:navinda@email.com', value: 'navinda@email.com' },
   { label: 'Twitter/X', icon: '🐦', href: 'https://x.com/navinda', value: 'x.com/navinda' },
 ];
