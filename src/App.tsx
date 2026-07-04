@@ -3,6 +3,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Instagram, Linkedin, GitHub, Mail } from 'react-feather';
+import cv from './assets/Navinda CV.pdf';
 
 // ── Google Fonts injection ──────────────────────────────────────────────────
 const FontLoader = () => {
@@ -98,6 +99,8 @@ function ThreeScene({ theme }: { theme: string }) {
     </Canvas>
   );
 }
+// ── 3D Cube ─────────────────────────────────────────────────────────────────
+
 
 // ── Minimalist Project Carousel ────────────────────────────────────────────
 const PROJECTS = [
@@ -200,7 +203,8 @@ function ProjectCarousel({ theme }: { theme: string }) {
       maxWidth: '1200px',
       margin: '0 auto',
       width: '100%',
-      padding: '0 20px',
+      padding: '0 clamp(16px, 4vw, 20px)',
+      boxSizing: 'border-box',
     }}>
       {/* Projects Grid */}
       <div style={{
@@ -538,7 +542,7 @@ function SideNav({ active, onNav, theme }: { active: string; onNav: (id: string)
       transform: 'translateY(-50%)',
       display: 'flex', flexDirection: 'column', gap: 14,
       zIndex: 100,
-    }}>
+    }} className="side-nav">
       {SECTIONS.map(s => {
         const isActive = active === s;
         return (
@@ -715,13 +719,13 @@ export default function App() {
                 height: 'clamp(300px, 50vh, 500px)',
                 position: 'relative',
               }}>
-                {isColor && (
+                {/* {isColor && (
                   <div style={{
                     position: 'absolute', inset: 0,
                     background: 'radial-gradient(ellipse at 55% 45%, rgba(255,107,53,0.18) 0%, rgba(139,92,246,0.12) 45%, transparent 70%)',
                     pointerEvents: 'none', zIndex: 0,
                   }} />
-                )}
+                )} */}
                 <ThreeScene theme={theme} />
               </div>
 
@@ -817,6 +821,34 @@ export default function App() {
                     borderRadius: 8, cursor: 'pointer',
                     transition: 'border-color 0.15s',
                   }}>Contact</button>
+
+                  <a
+                    href={cv}
+                    download
+                    style={{
+                      padding: '13px 28px',
+                      background: 'transparent',
+                      color: vars['--text'],
+                      fontFamily: 'Syne,sans-serif', fontWeight: 700,
+                      fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase',
+                      border: `1px solid ${isColor ? 'rgba(255,107,53,0.4)' : 'rgba(0,0,0,0.15)'}`,
+                      borderRadius: 8, cursor: 'pointer',
+                      textDecoration: 'none',
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      transition: 'border-color 0.15s, transform 0.15s',
+                    }}
+
+                    onMouseEnter={e => {
+                      e.currentTarget.style.borderColor = isColor ? '#FF6B35' : '#111';
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.borderColor = isColor ? 'rgba(255,107,53,0.4)' : 'rgba(0,0,0,0.15)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    <span>⬇</span> Download CV
+                  </a>
                 </div>
               </div>
             </div>
