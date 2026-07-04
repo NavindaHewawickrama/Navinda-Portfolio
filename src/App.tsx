@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
+import { Instagram, Linkedin, GitHub, Mail } from 'react-feather';
 
 // ── Google Fonts injection ──────────────────────────────────────────────────
 const FontLoader = () => {
@@ -479,10 +480,10 @@ function ProjectCarousel({ theme }: { theme: string }) {
 
 // ── Contact ──────────────────────────────────────────────────────────────────
 const CONTACTS = [
-  { label: 'LinkedIn', icon: '💼', href: 'https://linkedin.com/in/navinda-hewawickrama', value: 'linkedin.com/in/navinda' },
-  { label: 'GitHub', icon: '🐙', href: 'https://github.com/NavindaHewawickrama', value: 'github.com/navinda' },
-  { label: 'Email', icon: '✉️', href: 'mailto:navinda@email.com', value: 'navinda@email.com' },
-  { label: 'Twitter/X', icon: '🐦', href: 'https://x.com/navinda', value: 'x.com/navinda' },
+  { label: 'LinkedIn', icon: <Linkedin />, href: 'https://linkedin.com/in/navinda-hewawickrama', value: 'linkedin.com/in/navinda' },
+  { label: 'GitHub', icon: <GitHub />, href: 'https://github.com/NavindaHewawickrama', value: 'github.com/navinda' },
+  { label: 'Email', icon: <Mail />, href: 'mailto:hewawickraman@email.com', value: 'hewawickraman@email.com' },
+  { label: 'Instagram', icon: <Instagram />, href: 'https://instagram.com/navinda_hewa', value: 'navinda_hewa' },
 ];
 
 function ContactSection({ theme }: { theme: string }) {
@@ -647,6 +648,9 @@ export default function App() {
     document.body.style.fontFamily = 'DM Sans,sans-serif';
     document.body.style.margin = '0';
     document.body.style.transition = 'background 0.4s,color 0.4s';
+    document.body.style.overflowX = 'hidden';
+    document.body.style.width = '100%';
+    document.documentElement.style.overflowX = 'hidden';
   }, [theme]);
 
   // Scroll spy
@@ -659,6 +663,12 @@ export default function App() {
       if (el) obs.observe(el);
     });
     return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `*, *::before, *::after { box-sizing: border-box; }`;
+    document.head.appendChild(style);
   }, []);
 
   const navTo = (id: any) => {
@@ -696,6 +706,8 @@ export default function App() {
               display: 'flex',
               flexDirection: 'column',
               gap: 48,
+              alignItems: 'center',
+              width: '100%',
             }}>
               {/* Cube - Will be at top on mobile, side by side on desktop */}
               <div className="cube-container" style={{
@@ -716,6 +728,9 @@ export default function App() {
               {/* Text Content */}
               <div className="text-container" style={{
                 width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
               }}>
                 <div className="status-badge" style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8,
