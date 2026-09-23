@@ -1,8 +1,39 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, Environment, Lightformer } from '@react-three/drei';
 import * as THREE from 'three';
-import { Instagram, Linkedin, GitHub, Mail } from 'react-feather';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Linkedin01Icon,
+  Github01Icon,
+  Mail01Icon,
+  InstagramIcon,
+  LaptopIcon,
+  SmileIcon,
+  RocketIcon,
+  GitBranchIcon,
+  Layers02Icon,
+  ReactIcon,
+  NextIcon,
+  CubeIcon,
+  Typescript01Icon,
+  HexagonIcon,
+  PythonIcon,
+  DatabaseIcon,
+  Leaf01Icon,
+  ContainerIcon,
+  FigmaIcon,
+  AmazonIcon,
+  TailwindcssIcon,
+  ApiIcon,
+  ZapIcon,
+  SourceCodeIcon,
+  CheckmarkCircle02Icon,
+  GlobeIcon,
+  Download04Icon,
+  WhatsappIcon,
+} from '@hugeicons/core-free-icons';
+import { animate } from 'animejs';
 import cv from './assets/Navinda CV.pdf';
 
 // ── Google Fonts injection ──────────────────────────────────────────────────
@@ -37,45 +68,48 @@ const makeStyles = (theme: string) => {
   };
 };
 
-// ── 3D Cube ─────────────────────────────────────────────────────────────────
-function SpinCube({ theme }: { theme: string }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const wireRef = useRef<THREE.Mesh>(null);
+// ── 3D Gradient Torus Knot ───────────────────────────────────────────────────
+// A glossy torus knot with a smooth per-vertex color gradient running along
+// its length, echoing the pink-to-teal look of a Theatre.js/Three.js showcase.
+function GradientKnot({ theme }: { theme: string }) {
   const groupRef = useRef<THREE.Group>(null);
+  const isColor = theme === 'color';
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     if (groupRef.current) {
-      groupRef.current.rotation.y = t * 0.35;
-      groupRef.current.rotation.x = Math.sin(t * 0.2) * 0.25;
+      groupRef.current.rotation.y = t * 0.3;
+      groupRef.current.rotation.x = Math.sin(t * 0.2) * 0.3;
       groupRef.current.position.y = Math.sin(t * 0.6) * 0.12;
     }
   });
 
-  const isColor = theme === 'color';
-  const cubeColor = isColor ? '#FF6B35' : '#222222';
-  const emissive = isColor ? '#c43a08' : '#000000';
-  const wireColor = isColor ? '#8B5CF6' : '#aaaaaa';
+  const geometry = useMemo(() => {
+    const geo = new THREE.TorusKnotGeometry(1.1, 0.38, 220, 32, 2, 3);
+    const uv = geo.attributes.uv;
+    const colors = new Float32Array(uv.count * 3);
+    const colorA = new THREE.Color(isColor ? '#FF9F5C' : '#4a4a4a');
+    const colorB = new THREE.Color(isColor ? '#FF6B35' : '#1c1c1c');
+    const mixed = new THREE.Color();
+    for (let i = 0; i < uv.count; i++) {
+      const wave = (Math.sin(uv.getX(i) * Math.PI * 2) + 1) / 2;
+      mixed.copy(colorA).lerpHSL(colorB, wave);
+      colors[i * 3] = mixed.r;
+      colors[i * 3 + 1] = mixed.g;
+      colors[i * 3 + 2] = mixed.b;
+    }
+    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    return geo;
+  }, [isColor]);
 
   return (
     <group ref={groupRef}>
-      <mesh ref={meshRef}>
-        <boxGeometry args={[2.2, 2.2, 2.2]} />
+      <mesh geometry={geometry}>
         <meshStandardMaterial
-          color={cubeColor}
-          emissive={emissive}
-          emissiveIntensity={isColor ? 0.25 : 0.05}
-          roughness={0.25}
-          metalness={0.55}
-        />
-      </mesh>
-      <mesh ref={wireRef}>
-        <boxGeometry args={[2.2, 2.2, 2.2]} />
-        <meshBasicMaterial
-          color={wireColor}
-          wireframe
-          transparent
-          opacity={isColor ? 0.18 : 0.12}
+          vertexColors
+          roughness={isColor ? 0.2 : 0.08}
+          metalness={isColor ? 0.8 : 1}
+          envMapIntensity={1.6}
         />
       </mesh>
     </group>
@@ -86,20 +120,37 @@ function ThreeScene({ theme }: { theme: string }) {
   const isColor = theme === 'color';
   return (
     <Canvas camera={{ position: [4, 2.5, 5.5], fov: 40 }}>
-      <ambientLight intensity={isColor ? 0.3 : 0.6} />
-      <directionalLight position={[6, 8, 4]} intensity={1.4} />
+      <ambientLight intensity={isColor ? 1.1 : 0.6} />
+      <directionalLight position={[6, 8, 4]} intensity={1} />
       {isColor && (
         <>
-          <pointLight position={[-4, 3, 3]} color="#FF6B35" intensity={3} distance={12} />
-          <pointLight position={[4, -2, -3]} color="#8B5CF6" intensity={2} distance={10} />
+          <pointLight position={[-4, 3, 3]} color="#FFB86B" intensity={3} distance={14} />
+          <pointLight position={[4, -2, -3]} color="#FFD9A8" intensity={2.5} distance={12} />
+          <pointLight position={[0, 3, 5]} color="#FFE7C2" intensity={1.3} distance={14} />
+          <pointLight position={[0, -3, 4]} color="#FFE7C2" intensity={1} distance={12} />
+          <pointLight position={[0, 0, -5]} color="#FFB86B" intensity={1.2} distance={12} />
         </>
       )}
-      <SpinCube theme={theme} />
+      <GradientKnot theme={theme} />
+      {/* Procedural studio env (rendered offline, no external HDRI fetch) so the
+          chrome material has something to reflect. */}
+      <Environment resolution={256}>
+        <Lightformer form="rect" color="#ffffff" intensity={3.5} scale={[8, 4, 1]} position={[0, 5, -6]} target={[0, 0, 0]} />
+        <Lightformer form="rect" color={isColor ? '#FFB86B' : '#ffffff'} intensity={isColor ? 6.5 : 5} scale={[4, 6, 1]} position={[-6, 1, 2]} target={[0, 0, 0]} />
+        <Lightformer form="rect" color={isColor ? '#FFD9A8' : '#dddddd'} intensity={isColor ? 6.5 : 5} scale={[4, 6, 1]} position={[6, -1, 2]} target={[0, 0, 0]} />
+        <Lightformer form="ring" color="#ffffff" intensity={2.5} scale={10} position={[0, 0, -10]} target={[0, 0, 0]} />
+        {isColor && (
+          <>
+            <Lightformer form="rect" color="#FFB86B" intensity={3} scale={[8, 8, 1]} position={[0, 0, 8]} target={[0, 0, 0]} />
+            <Lightformer form="rect" color="#FFD9A8" intensity={2.5} scale={[10, 4, 1]} position={[0, -6, 2]} target={[0, 0, 0]} />
+          </>
+        )}
+      </Environment>
       <OrbitControls enableZoom={false} enablePan={false} autoRotate={false} />
     </Canvas>
   );
 }
-// ── 3D Cube ─────────────────────────────────────────────────────────────────
+// ── 3D Gradient Torus Knot ───────────────────────────────────────────────────
 
 
 // ── Minimalist Project Carousel ────────────────────────────────────────────
@@ -330,7 +381,7 @@ function ProjectCarousel({ theme }: { theme: string }) {
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                <span style={{ marginRight: '6px' }}>🐙</span> GitHub
+                <HugeiconsIcon icon={Github01Icon} size={14} style={{ marginRight: '6px', verticalAlign: '-2px' }} /> GitHub
               </a>
 
               {/* Website Button */}
@@ -366,7 +417,7 @@ function ProjectCarousel({ theme }: { theme: string }) {
                   }
                 }}
               >
-                <span style={{ marginRight: '6px' }}>🌐</span> Live Demo →
+                <HugeiconsIcon icon={GlobeIcon} size={14} style={{ marginRight: '6px', verticalAlign: '-2px' }} /> Live Demo →
               </a>
             </div>
           </div>
@@ -484,10 +535,10 @@ function ProjectCarousel({ theme }: { theme: string }) {
 
 // ── Contact ──────────────────────────────────────────────────────────────────
 const CONTACTS = [
-  { label: 'LinkedIn', icon: <Linkedin />, href: 'https://linkedin.com/in/navinda-hewawickrama', value: 'linkedin.com/in/navinda' },
-  { label: 'GitHub', icon: <GitHub />, href: 'https://github.com/NavindaHewawickrama', value: 'github.com/navinda' },
-  { label: 'Email', icon: <Mail />, href: 'mailto:hewawickraman@email.com', value: 'hewawickraman@email.com' },
-  { label: 'Instagram', icon: <Instagram />, href: 'https://instagram.com/navinda_hewa', value: 'navinda_hewa' },
+  { label: 'LinkedIn', icon: Linkedin01Icon, href: 'https://linkedin.com/in/navinda-hewawickrama', value: 'linkedin.com/in/navinda' },
+  { label: 'GitHub', icon: Github01Icon, href: 'https://github.com/NavindaHewawickrama', value: 'github.com/navinda' },
+  { label: 'Email', icon: Mail01Icon, href: 'mailto:hewawickraman@email.com', value: 'hewawickraman@email.com' },
+  { label: 'Instagram', icon: InstagramIcon, href: 'https://instagram.com/navinda_hewa', value: 'navinda_hewa' },
 ];
 
 function ContactSection({ theme }: { theme: string }) {
@@ -495,7 +546,7 @@ function ContactSection({ theme }: { theme: string }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 16, width: '100%', maxWidth: 600 }}>
       {CONTACTS.map(c => (
-        <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer" style={{
+        <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer" className="reveal-on-scroll" style={{
           display: 'flex', flexDirection: 'column', gap: 8,
           padding: '20px 22px',
           background: isColor ? '#1a1a1a' : '#fff',
@@ -515,7 +566,9 @@ function ContactSection({ theme }: { theme: string }) {
             e.currentTarget.style.boxShadow = isColor ? 'none' : '0 2px 10px rgba(0,0,0,0.06)';
           }}
         >
-          <span style={{ fontSize: 24 }}>{c.icon}</span>
+          <span style={{ fontSize: 24 }}>
+            <HugeiconsIcon icon={c.icon} size={24} color={isColor ? '#FF6B35' : '#111'} strokeWidth={1.5} />
+          </span>
           <div>
             <div style={{
               fontFamily: 'Syne,sans-serif', fontWeight: 700, fontSize: 13,
@@ -618,7 +671,7 @@ function SectionTitle({ children, theme }: { children: React.ReactNode; theme: s
   const isColor = theme === 'color';
   return (
     <div style={{ textAlign: 'center', marginBottom: 48 }}>
-      <div style={{
+      <div className="reveal-on-scroll" style={{
         display: 'inline-flex', alignItems: 'center', gap: 10,
         padding: '5px 10px',
         background: isColor ? 'rgba(255,107,53,0.10)' : 'rgba(0,0,0,0.06)',
@@ -637,7 +690,7 @@ function SectionTitle({ children, theme }: { children: React.ReactNode; theme: s
 
 // ── App ───────────────────────────────────────────────────────────────────────
 export default function App() {
-  const [theme, setTheme] = useState('color');
+  const [theme, setTheme] = useState('mono');
   const [activeSection, setActive] = useState('hero');
 
   const isColor = theme === 'color';
@@ -673,6 +726,45 @@ export default function App() {
     const style = document.createElement('style');
     style.innerHTML = `*, *::before, *::after { box-sizing: border-box; }`;
     document.head.appendChild(style);
+  }, []);
+
+  // Anime.js scroll-triggered reveal, with an orange glow pulse, for cards/pills/titles.
+  // Driven by a plain IntersectionObserver (reliable) which then hands off to anime.js
+  // for the actual animation. Elements have no opacity/transform set in their base
+  // style, so they stay fully visible even if this effect never runs.
+  useEffect(() => {
+    const els = document.querySelectorAll<HTMLElement>('.reveal-on-scroll');
+    const revealed = new WeakSet<Element>();
+
+    const reveal = (el: HTMLElement) => {
+      if (revealed.has(el)) return;
+      revealed.add(el);
+      animate(el, {
+        opacity: [0, 1],
+        translateY: [28, 0],
+        boxShadow: [
+          { to: '0 0 26px 2px rgba(255,107,53,0.35)', duration: 400 },
+          { to: '0 0 0px 0px rgba(255,107,53,0)', duration: 500 },
+        ],
+        duration: 700,
+        ease: 'outCubic',
+      });
+    };
+
+    const obs = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            reveal(entry.target as HTMLElement);
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -8% 0px' }
+    );
+
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
   }, []);
 
   const navTo = (id: any) => {
@@ -736,24 +828,6 @@ export default function App() {
                 flexDirection: 'column',
                 alignItems: 'center',
               }}>
-                <div className="status-badge" style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 8,
-                  marginBottom: 28,
-                  padding: '5px 16px',
-                  border: `1px solid ${isColor ? 'rgba(255,107,53,0.3)' : 'rgba(0,0,0,0.12)'}`,
-                  borderRadius: 30,
-                }}>
-                  <span style={{
-                    width: 7, height: 7, borderRadius: '50%',
-                    background: isColor ? '#34d399' : '#111',
-                    // animation: 'pulse 2s ease-in-out infinite',
-                  }} />
-                  <span style={{
-                    fontFamily: 'DM Sans,sans-serif', fontSize: 11, fontWeight: 500,
-                    color: isColor ? '#34d399' : '#111', letterSpacing: '0.1em',
-                  }}>Available for work</span>
-                </div>
-
                 <h1 style={{
                   fontFamily: 'Syne,sans-serif',
                   fontSize: 'clamp(38px, 5vw, 78px)',
@@ -794,7 +868,7 @@ export default function App() {
                   margin: '0 0 36px',
                   maxWidth: '100%',
                 }}>
-                  Full-stack developer crafting immersive 3D web experiences.<br />
+                  Full-stack developer, researcher in sportomics, and animation enthusiast.<br />
                   React · Three.js · Node.js · UI/UX
                 </p>
 
@@ -847,7 +921,7 @@ export default function App() {
                       e.currentTarget.style.transform = 'translateY(0)';
                     }}
                   >
-                    <span>⬇</span> Download CV
+                    <HugeiconsIcon icon={Download04Icon} size={14} /> Download CV
                   </a>
                 </div>
               </div>
@@ -902,13 +976,12 @@ export default function App() {
             .text-container p {
               text-align: center !important;
             }
-            .text-container .status-badge,
             .text-container .buttons-wrapper {
               justify-content: center !important;
               display: flex !important;
             }
           }
-          
+
           /* Mobile styles (below 768px) - cube on top, text centered and justified */
           @media (max-width: 767px) {
             #hero {
@@ -937,7 +1010,6 @@ export default function App() {
               text-justify: inter-word !important;
               padding: 0 8px !important;
             }
-            .text-container .status-badge,
             .text-container .buttons-wrapper {
               justify-content: center !important;
               display: flex !important;
@@ -982,14 +1054,13 @@ export default function App() {
 
           {/* Stat cards - Updated with your stats */}
           {[
-            { n: '2+', l: 'Years Coding', icon: '💻' },
-            // { n: '4', l: 'BSc at Ruhuna', icon: '🎓' },
-            { n: '2', l: 'Happy Clients', icon: '😊' },
-            { n: '2', l: 'Projects Shipped', icon: '🚀' },
-            { n: '10+', l: 'Open Source Contributions', icon: '�' },
-            { n: '20+', l: 'Technologies & Languages', icon: '🚀' },
+            { n: '2+', l: 'Years Coding', icon: LaptopIcon },
+            { n: '2', l: 'Happy Clients', icon: SmileIcon },
+            { n: '2', l: 'Projects Shipped', icon: RocketIcon },
+            { n: '10+', l: 'Open Source Contributions', icon: GitBranchIcon },
+            { n: '20+', l: 'Technologies & Languages', icon: Layers02Icon },
           ].map(({ n, l, icon }) => (
-            <div key={l} style={{
+            <div key={l} className="reveal-on-scroll" style={{
               padding: 'clamp(16px, 3vw, 20px)',
               background: isColor ? '#141414' : '#f5f5f5',
               border: `1px solid ${isColor ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'}`,
@@ -1010,9 +1081,12 @@ export default function App() {
               }}
             >
               <div style={{
-                fontSize: 'clamp(28px, 5vw, 32px)',
-                marginBottom: 8,
-              }}>{icon}</div>
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: 10,
+              }}>
+                <HugeiconsIcon icon={icon} size={30} color={isColor ? '#FF6B35' : '#111'} strokeWidth={1.5} />
+              </div>
               <div style={{
                 fontFamily: 'Syne,sans-serif',
                 fontWeight: 800,
@@ -1056,25 +1130,26 @@ export default function App() {
               justifyContent: 'center',
             }}>
               {[
-                { name: 'React', icon: '⚛️', color: '#61DAFB' },
-                { name: 'Next.js', icon: '▲', color: '#000000' },
-                { name: 'Three.js', icon: '🎨', color: '#FF6B35' },
-                { name: 'TypeScript', icon: '📘', color: '#3178C6' },
-                { name: 'Node.js', icon: '🟢', color: '#339933' },
-                { name: 'Python', icon: '🐍', color: '#3776AB' },
-                { name: 'PostgreSQL', icon: '🐘', color: '#336791' },
-                { name: 'MongoDB', icon: '🍃', color: '#47A248' },
-                { name: 'Docker', icon: '🐳', color: '#2496ED' },
-                { name: 'Figma', icon: '🎨', color: '#F24E1E' },
-                { name: 'AWS', icon: '☁️', color: '#FF9900' },
-                { name: 'Tailwind', icon: '🎨', color: '#06B6D4' },
-                { name: 'GraphQL', icon: '📊', color: '#E10098' },
-                { name: 'Redis', icon: '🔴', color: '#DC382D' },
-                { name: 'Git', icon: '📝', color: '#F05032' },
-                { name: 'Jest', icon: '✅', color: '#C21325' },
+                { name: 'React', icon: ReactIcon },
+                { name: 'Next.js', icon: NextIcon },
+                { name: 'Three.js', icon: CubeIcon },
+                { name: 'TypeScript', icon: Typescript01Icon },
+                { name: 'Node.js', icon: HexagonIcon },
+                { name: 'Python', icon: PythonIcon },
+                { name: 'PostgreSQL', icon: DatabaseIcon },
+                { name: 'MongoDB', icon: Leaf01Icon },
+                { name: 'Docker', icon: ContainerIcon },
+                { name: 'Figma', icon: FigmaIcon },
+                { name: 'AWS', icon: AmazonIcon },
+                { name: 'Tailwind', icon: TailwindcssIcon },
+                { name: 'GraphQL', icon: ApiIcon },
+                { name: 'Redis', icon: ZapIcon },
+                { name: 'Git', icon: SourceCodeIcon },
+                { name: 'Jest', icon: CheckmarkCircle02Icon },
               ].map(skill => (
                 <span
                   key={skill.name}
+                  className="reveal-on-scroll"
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -1107,7 +1182,7 @@ export default function App() {
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
-                  <span style={{ fontSize: '16px' }}>{skill.icon}</span>
+                  <HugeiconsIcon icon={skill.icon} size={16} strokeWidth={1.5} />
                   <span>{skill.name}</span>
                 </span>
               ))}
@@ -1146,7 +1221,7 @@ export default function App() {
         </p>
         <ContactSection theme={theme} />
 
-        <a href="mailto:navinda@email.com" style={{
+        <a href="https://wa.me/94722837603" target="_blank" rel="noopener noreferrer" style={{
           marginTop: 36,
           display: 'inline-flex', alignItems: 'center', gap: 10,
           padding: '15px 36px',
@@ -1159,7 +1234,7 @@ export default function App() {
         }}
           onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
           onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-        >Send a message →</a>
+        ><HugeiconsIcon icon={WhatsappIcon} size={16} /> Send a message →</a>
 
         <div style={{
           marginTop: 60, paddingTop: 24,
