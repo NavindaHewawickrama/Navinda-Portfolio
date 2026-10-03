@@ -11,7 +11,7 @@ import {
   LaptopIcon,
   SmileIcon,
   RocketIcon,
-  GitBranchIcon,
+  AtomIcon,
   Layers02Icon,
   ReactIcon,
   NextIcon,
@@ -28,13 +28,12 @@ import {
   ApiIcon,
   ZapIcon,
   SourceCodeIcon,
-  CheckmarkCircle02Icon,
   GlobeIcon,
-  Download04Icon,
+  ArrowDown01Icon,
+  Mortarboard01Icon,
   WhatsappIcon,
 } from '@hugeicons/core-free-icons';
 import { animate } from 'animejs';
-import cv from './assets/Navinda CV.pdf';
 
 // ── Google Fonts injection ──────────────────────────────────────────────────
 const FontLoader = () => {
@@ -533,6 +532,299 @@ function ProjectCarousel({ theme }: { theme: string }) {
   );
 }
 
+// ── Modules & Courses ────────────────────────────────────────────────────────
+type Course = { code: string; name: string; grade: string; note?: string };
+type Semester = { name: string; courses: Course[] };
+
+const ACADEMIC_RESULTS: { year: string; period: string; semesters: Semester[] }[] = [
+  {
+    year: 'Year 1', period: '2021',
+    semesters: [
+      {
+        name: 'Semester 1', courses: [
+          { code: 'AMT112β', name: 'Mathematical Foundation of Computer Science', grade: 'A' },
+          { code: 'CSC1113', name: 'Programming Techniques', grade: 'A+' },
+          { code: 'CSC1122', name: 'Computer Systems I', grade: 'A' },
+          { code: 'CSC113α', name: 'Internet Services and Web Development', grade: 'A' },
+          { code: 'CSC1142', name: 'System Analysis & Design', grade: 'B+' },
+          { code: 'CSC1153', name: 'Laboratory Assignments', grade: 'A+' },
+          { code: 'MAT112δ', name: 'Differential Equations', grade: 'A' },
+          { code: 'MAT113δ', name: 'Introductory Statistics', grade: 'A+' },
+        ],
+      },
+      {
+        name: 'Semester 2', courses: [
+          { code: 'CSC1213', name: 'Database Management Systems', grade: 'A' },
+          { code: 'CSC1223', name: 'Data Structures and Algorithms', grade: 'A' },
+          { code: 'CSC1233', name: 'Software Engineering', grade: 'A' },
+          { code: 'CSC1242', name: 'Object Oriented System Development', grade: 'B' },
+          { code: 'CSC1251', name: 'Computer Laboratory', grade: 'A+', note: 'Repeat · 2022' },
+          { code: 'ENG1201', name: 'Preliminary English II (Level 01)', grade: 'A-' },
+          { code: 'MAT121β', name: 'Algebra', grade: 'A' },
+          { code: 'MAT122β', name: 'Calculus', grade: 'A' },
+        ],
+      },
+    ],
+  },
+  {
+    year: 'Year 2', period: '2022',
+    semesters: [
+      {
+        name: 'Semester 1', courses: [
+          { code: 'AMT212β', name: 'Computational Mathematics', grade: 'B' },
+          { code: 'CSC2113', name: 'Data Communication & Computer Networks', grade: 'B' },
+          { code: 'CSC2123', name: 'Object Oriented Programming', grade: 'B-' },
+          { code: 'CSC2133', name: 'Operating Systems', grade: 'A' },
+          { code: 'CSC2143', name: 'Computer Graphics and Image Processing', grade: 'B+' },
+          { code: 'MAT211β', name: 'Linear Algebra', grade: 'A-' },
+          { code: 'PHY2112', name: 'Electronics', grade: 'B+' },
+        ],
+      },
+      {
+        name: 'Semester 2', courses: [
+          { code: 'CSC2213', name: 'Rapid Application Development', grade: 'B' },
+          { code: 'CSC2222', name: 'Computer Systems II', grade: 'A-' },
+          { code: 'CSC2233', name: 'Internet Programming', grade: 'A' },
+          { code: 'CSC2242', name: 'Advanced Database Management', grade: 'A-' },
+          { code: 'CSC2252', name: 'Project Management', grade: 'B-' },
+          { code: 'CSC2263', name: 'Multimedia and Video Production', grade: 'A' },
+          { code: 'CSC2272', name: 'Data and Network Security', grade: 'B-' },
+          { code: 'FSC225α', name: 'Health Related Physical Fitness and Wellness', grade: 'A+' },
+          { code: 'MAT225β', name: 'Mathematical Statistics I', grade: 'B-' },
+          { code: 'PHY2222', name: 'Electronics Practical', grade: 'A' },
+        ],
+      },
+      {
+        name: 'Year-long', courses: [
+          { code: 'ENG2B10', name: 'English Level II', grade: 'A' },
+        ],
+      },
+    ],
+  },
+  {
+    year: 'Year 3', period: '2023',
+    semesters: [
+      {
+        name: 'Semester 1', courses: [
+          { code: 'CSC3113', name: 'Group Projects', grade: 'A-' },
+          { code: 'CSC3122', name: 'E-commerce and Professional Practice', grade: 'A-' },
+          { code: 'CSC3132', name: 'Data Warehousing and Data Mining', grade: 'A' },
+          { code: 'CSC3142', name: 'Internet Services and Protocols', grade: 'A-' },
+          { code: 'CSC3172', name: 'Distributed Systems', grade: 'A' },
+        ],
+      },
+      {
+        name: 'Semester 2', courses: [
+          { code: 'CSC3216', name: 'Industrial Training', grade: 'A' },
+        ],
+      },
+      {
+        name: 'Year-long', courses: [
+          { code: 'ENG3B10', name: 'English Level III', grade: 'A-' },
+        ],
+      },
+    ],
+  },
+  {
+    year: 'Year 4', period: '2024',
+    semesters: [
+      {
+        name: 'Semester 1', courses: [
+          { code: 'CSC4112', name: 'Research Seminar', grade: 'A' },
+          { code: 'CSC4122', name: 'Research Methodology', grade: 'B+' },
+          { code: 'CSC4133', name: 'Neural Networks', grade: 'A' },
+          { code: 'CSC4152', name: 'Enterprise Modeling', grade: 'B+' },
+          { code: 'CSC4162', name: 'Data Mining for Business Intelligence', grade: 'C+' },
+          { code: 'CSC4172', name: 'High Performance Computing', grade: 'B' },
+          { code: 'CSC4182', name: 'Bioinformatics', grade: 'A' },
+        ],
+      },
+      {
+        name: 'Semester 2', courses: [
+          { code: 'CSC4212', name: 'Compilers and Theory of Computation', grade: 'B+' },
+          { code: 'CSC4222', name: 'Service Oriented Computing', grade: 'B+' },
+          { code: 'CSC4232', name: 'Formal Methods and Software Verification', grade: 'C+' },
+          { code: 'CSC4242', name: 'Artificial Intelligence', grade: 'A' },
+          { code: 'CSC4262', name: 'Knowledge Engineering', grade: 'B+' },
+          { code: 'CSC4282', name: 'Reconfigurable Computing', grade: 'B' },
+        ],
+      },
+      {
+        name: 'Year-long', courses: [
+          { code: 'CSC4046', name: 'Individual Research Project', grade: 'A' },
+        ],
+      },
+    ],
+  },
+];
+
+// Animates height via grid rows; collapsed content is inert so it can't be tabbed into.
+function Collapse({ open, children }: { open: boolean; children: React.ReactNode }) {
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateRows: open ? '1fr' : '0fr',
+      transition: 'grid-template-rows 0.35s ease',
+    }}>
+      <div style={{ overflow: 'hidden', minHeight: 0 }} inert={!open}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Chevron({ open, color }: { open: boolean; color: string }) {
+  return (
+    <HugeiconsIcon icon={ArrowDown01Icon} size={18} color={color} style={{
+      transition: 'transform 0.3s ease',
+      transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+      flexShrink: 0,
+    }} />
+  );
+}
+
+function ModulesAndCourses({ theme }: { theme: string }) {
+  const isColor = theme === 'color';
+  const vars = makeStyles(theme);
+  const accent = isColor ? '#FF6B35' : '#111';
+  const [open, setOpen] = useState(false);
+  const [openKeys, setOpenKeys] = useState<Set<string>>(new Set());
+
+  const toggle = (key: string) => setOpenKeys(prev => {
+    const next = new Set(prev);
+    if (next.has(key)) next.delete(key); else next.add(key);
+    return next;
+  });
+
+  const gradeStyle = (grade: string): React.CSSProperties => {
+    const top = grade.startsWith('A');
+    return {
+      minWidth: 38, textAlign: 'center',
+      padding: '3px 8px', borderRadius: 20,
+      fontFamily: 'Syne,sans-serif', fontWeight: 700, fontSize: 12,
+      background: top
+        ? (isColor ? 'rgba(255,107,53,0.14)' : 'rgba(0,0,0,0.08)')
+        : (isColor ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)'),
+      color: top ? accent : vars['--muted'],
+      flexShrink: 0,
+    };
+  };
+
+  const rowButton: React.CSSProperties = {
+    width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    gap: 12, background: 'transparent', border: 'none', cursor: 'pointer',
+    color: vars['--text'], textAlign: 'left',
+  };
+
+  return (
+    <div style={{
+      gridColumn: '1 / -1',
+      background: isColor ? '#1a1a1a' : '#fff',
+      border: `1px solid ${isColor ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.10)'}`,
+      borderRadius: 14,
+      overflow: 'hidden',
+    }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        style={{ ...rowButton, justifyContent: 'center', padding: 'clamp(18px, 3vw, 22px)' }}
+      >
+        <span style={{
+          fontFamily: 'Syne,sans-serif',
+          fontSize: 'clamp(12px, 2vw, 13px)',
+          fontWeight: 700,
+          letterSpacing: '0.16em',
+          textTransform: 'uppercase',
+          color: isColor ? '#8B5CF6' : '#888',
+          display: 'inline-flex', alignItems: 'center', gap: 10,
+        }}>
+          <HugeiconsIcon icon={Mortarboard01Icon} size={18} strokeWidth={1.5} />
+          Modules & Courses
+        </span>
+        <Chevron open={open} color={isColor ? '#8B5CF6' : '#888'} />
+      </button>
+
+      <Collapse open={open}>
+        <div style={{
+          padding: '0 clamp(14px, 3vw, 24px) clamp(16px, 3vw, 24px)',
+          display: 'flex', flexDirection: 'column', gap: 10,
+        }}>
+          {ACADEMIC_RESULTS.map(y => {
+            const yearKey = y.year;
+            const yearOpen = openKeys.has(yearKey);
+            const count = y.semesters.reduce((n, s) => n + s.courses.length, 0);
+            return (
+              <div key={yearKey} style={{
+                border: `1px solid ${isColor ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)'}`,
+                borderRadius: 12,
+                background: isColor ? '#141414' : '#f9f9f9',
+              }}>
+                <button onClick={() => toggle(yearKey)} aria-expanded={yearOpen}
+                  style={{ ...rowButton, padding: '14px 18px' }}>
+                  <span style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
+                    <span style={{ fontFamily: 'Syne,sans-serif', fontWeight: 700, fontSize: 15, color: accent }}>{y.year}</span>
+                    <span style={{ fontSize: 12, color: vars['--muted'] }}>{y.period} · {count} modules</span>
+                  </span>
+                  <Chevron open={yearOpen} color={vars['--muted']} />
+                </button>
+
+                <Collapse open={yearOpen}>
+                  <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {y.semesters.map(s => {
+                      const semKey = `${y.year}/${s.name}`;
+                      const semOpen = openKeys.has(semKey);
+                      return (
+                        <div key={semKey} style={{
+                          borderRadius: 10,
+                          background: isColor ? '#1a1a1a' : '#fff',
+                          border: `1px solid ${isColor ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}`,
+                        }}>
+                          <button onClick={() => toggle(semKey)} aria-expanded={semOpen}
+                            style={{ ...rowButton, padding: '11px 14px' }}>
+                            <span style={{ fontSize: 13, fontWeight: 500 }}>
+                              {s.name}
+                              <span style={{ color: vars['--muted'], fontWeight: 300 }}> · {s.courses.length}</span>
+                            </span>
+                            <Chevron open={semOpen} color={vars['--muted']} />
+                          </button>
+
+                          <Collapse open={semOpen}>
+                            <ul style={{ listStyle: 'none', margin: 0, padding: '0 14px 10px' }}>
+                              {s.courses.map(c => (
+                                <li key={c.code} style={{
+                                  display: 'flex', alignItems: 'center', gap: 12,
+                                  padding: '9px 0',
+                                  borderTop: `1px solid ${isColor ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'}`,
+                                }}>
+                                  <span style={{
+                                    fontFamily: 'monospace', fontSize: 11,
+                                    color: vars['--muted'], width: 64, flexShrink: 0,
+                                  }}>{c.code}</span>
+                                  <span style={{ flex: 1, fontSize: 13, color: vars['--text'], minWidth: 0 }}>
+                                    {c.name}
+                                    {c.note && (
+                                      <span style={{ marginLeft: 8, fontSize: 11, color: vars['--muted'] }}>({c.note})</span>
+                                    )}
+                                  </span>
+                                  <span style={gradeStyle(c.grade)}>{c.grade}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </Collapse>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Collapse>
+              </div>
+            );
+          })}
+        </div>
+      </Collapse>
+    </div>
+  );
+}
+
 // ── Contact ──────────────────────────────────────────────────────────────────
 const CONTACTS = [
   { label: 'LinkedIn', icon: Linkedin01Icon, href: 'https://linkedin.com/in/navinda-hewawickrama', value: 'linkedin.com/in/navinda' },
@@ -872,7 +1164,7 @@ export default function App() {
                   React · Three.js · Node.js · UI/UX
                 </p>
 
-                <div className="buttons-wrapper" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'sm:center lg:left' }}>
+                <div className="buttons-wrapper" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                   <button onClick={() => navTo('projects')} style={{
                     padding: '13px 28px',
                     background: isColor ? '#FF6B35' : '#111',
@@ -896,7 +1188,7 @@ export default function App() {
                     transition: 'border-color 0.15s',
                   }}>Contact</button>
 
-                  <a
+                  {/* <a
                     href={cv}
                     download
                     style={{
@@ -922,7 +1214,7 @@ export default function App() {
                     }}
                   >
                     <HugeiconsIcon icon={Download04Icon} size={14} /> Download CV
-                  </a>
+                  </a> */}
                 </div>
               </div>
             </div>
@@ -957,6 +1249,29 @@ export default function App() {
             }
           }
           
+          /* Extra large screens - center everything */
+          @media (min-width: 1440px) {
+            .text-container h1,
+            .text-container h3,
+            .text-container p {
+              text-align: center !important;
+            }
+            .text-container .buttons-wrapper {
+              justify-content: center !important;
+            }
+          }
+
+          .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin: 0 auto;
+          }
+          @media (max-width: 767px) {
+            .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+          }
+
           /* Tablet styles (768px to 1023px) - cube on top, text centered */
           @media (min-width: 768px) and (max-width: 1023px) {
             .hero-content-wrapper {
@@ -1025,7 +1340,7 @@ export default function App() {
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))',
           gap: '20px',
-          maxWidth: '90vw',
+          maxWidth: 'min(90vw, 1200px)',
           width: '100%',
           margin: '0 auto',
         }}>
@@ -1046,18 +1361,20 @@ export default function App() {
               textAlign: 'center',
               margin: 0,
             }}>
-              Hey, I'm <strong style={{ fontWeight: 600, color: isColor ? '#FF6B35' : '#111' }}>Navinda</strong> — a passionate full-stack developer based in Sri Lanka.
-              I specialise in building interactive 3D web experiences, sleek UIs, and scalable backends.
-              When I'm not pushing pixels, I'm exploring new tech, contributing to open source, or hiking somewhere off the beaten track.
+              Hey, I'm <strong style={{ fontWeight: 600, color: isColor ? '#FF6B35' : '#111' }}>Navinda</strong> — a full-stack developer based in Sri Lanka.
+              I work across full-stack web development, machine learning and AI, and desktop applications — from interactive 3D
+              experiences and sleek UIs to scalable backends and intelligent systems.
+              Away from the keyboard, you'll find me playing music, out on a run, lost in a good book, or watching anime.
             </p>
           </div>
 
-          {/* Stat cards - Updated with your stats */}
+          {/* Stat cards */}
+          <div className="stats-grid" style={{ gridColumn: '1 / -1' }}>
           {[
             { n: '2+', l: 'Years Coding', icon: LaptopIcon },
             { n: '2', l: 'Happy Clients', icon: SmileIcon },
             { n: '2', l: 'Projects Shipped', icon: RocketIcon },
-            { n: '10+', l: 'Open Source Contributions', icon: GitBranchIcon },
+            // { n: '10+', l: 'Open Source Contributions', icon: GitBranchIcon },
             { n: '20+', l: 'Technologies & Languages', icon: Layers02Icon },
           ].map(({ n, l, icon }) => (
             <div key={l} className="reveal-on-scroll" style={{
@@ -1102,6 +1419,7 @@ export default function App() {
               }}>{l}</div>
             </div>
           ))}
+          </div>
 
           {/* Skills - Enhanced with icons and hover effects */}
           <div style={{
@@ -1145,7 +1463,7 @@ export default function App() {
                 { name: 'GraphQL', icon: ApiIcon },
                 { name: 'Redis', icon: ZapIcon },
                 { name: 'Git', icon: SourceCodeIcon },
-                { name: 'Jest', icon: CheckmarkCircle02Icon },
+                { name: 'Electron', icon: AtomIcon },
               ].map(skill => (
                 <span
                   key={skill.name}
@@ -1188,6 +1506,8 @@ export default function App() {
               ))}
             </div>
           </div>
+
+          <ModulesAndCourses theme={theme} />
         </div>
       </Section>
 
